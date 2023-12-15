@@ -29,8 +29,9 @@ class DatasetArray(Dataset):
         return (features,labels)
     
 
-def dataloader1(dataset):
+def dataloader2(dataset):
     train_features=dataset['Xtr']
+    #train_features=train_features
     train_labels=dataset['Str']
     train_labels = torch.from_numpy(train_labels)
     train_labels=torch.nn.functional.one_hot(train_labels, num_classes=3).float()
@@ -38,7 +39,8 @@ def dataloader1(dataset):
     test_labels=dataset['Yts']
     test_labels = torch.from_numpy(test_labels)
     test_labels=torch.nn.functional.one_hot(test_labels, num_classes=3).float()
-    x_train,x_val,y_train,y_val=train_test_split(train_features,train_labels,test_size=0.2)
+    x_train,x_val,y_train,y_val=train_test_split(train_features[:500],train_labels[:500],test_size=0.2)
+    print(x_train.shape)
     x_train=torch.from_numpy(x_train.astype(np.float32) / 255).permute(0, 3, 1, 2)
     x_val=torch.from_numpy(x_val.astype(np.float32) / 255).permute(0, 3, 1, 2)
     x_test=torch.from_numpy(test_features.astype(np.float32) / 255).permute(0, 3, 1, 2)
@@ -55,7 +57,10 @@ def dataloader1(dataset):
                                 transforms.CenterCrop(224),
                                 transforms.ToTensor(),
                                 transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])]),
-    "test":transforms.Compose([transforms.ToTensor()])}
+
+    "test":transforms.Compose([transforms.Resize(256),
+                               transforms.CenterCrop(224),
+                               transforms.ToTensor()])}
     train_dataset=DatasetArray(x_train,y_train,transform=data_transform["train"])
     val_dataset=DatasetArray(x_val,y_val,transform=data_transform["val"])
     # train_dataset=DatasetArray(x_train,y_train)
