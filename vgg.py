@@ -52,6 +52,22 @@ class VGG16(nn.Module):
             nn.Linear(7*7*512,4096),
             nn.Linear(4096,10)            
         ) 
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight,nonlinearity='relu')
+
+                if m.bias is not None:
+                    nn.init.constant_(m.bias,0)
+
+            elif isinstance(m, nn.Linear):
+                nn.init.kaiming_normal_(m.weight, 0, 0.01)
+
+                if m.bias is not None:
+                    nn.init.constant_(m.bias,0)
+
+
+
+    
     
     def forward(self,x):
         x=self.block1(x)
