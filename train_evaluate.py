@@ -82,8 +82,10 @@ def evaluate(dataset,model):
     times=0
     model.eval()
     for features , labels in dataset:
+        print(features,labels)
         with torch.no_grad():
             probabilities=model(features)
+            print('probailities',probabilities)
             y_pred=torch.max(probabilities,dim=1).indices
             for index , value in enumerate(y_pred):
                 if value == labels[index]:
